@@ -1,0 +1,104 @@
+﻿@model IEnumerable<NoteWebApp.Models.Note>
+
+@{
+    ViewData["Title"] = "Notes";
+}
+
+<script src="https://kit.fontawesome.com/e0c6f6a835.js" crossorigin="anonymous"></script>
+<script>
+    function confirmDelete(noteId) {
+        var result = confirm("Are you sure you want to delete this note?");
+        if (result) {
+            window.location.href = '/Note/SoftDeleteNote?id=' + noteId;
+        }
+    }
+</script>
+
+<style>
+    .card {
+        font-size: smaller;
+    }
+
+    .card-body {
+        margin: 10px, 4px, 4px, 10px;
+        padding: 4px;
+        background-color: whitesmoke;
+        width: 23rem;
+        height: 22rem;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: justify;
+    }
+</style>
+
+<div class="row align-items-center justify-content-center">
+    @foreach (var note in Model)
+    {
+        <div class="col-md-4 mb-3 text-muted">
+            <a href="#" onclick="confirmDelete('@note.Id')" class="btn p-1">
+                <i class="fa-solid fa-trash"></i>
+            </a>
+            <a href="@Url.Action("UpdateNote", "Note", new { id = note.Id })" class="btn p-1">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a href="@Url.Action("PublicView", "ShareNote" , new { id = note.Id }, ViewContext.HttpContext.Request.Scheme)" class="btn p-1">
+                <i class="fa-solid fa-share"></i>
+            </a>
+
+            @if (note.IsPublic)
+            {
+                <button type="button" class="btn p-1" data-bs-toggle="modal" data-bs-target="#TestModel">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+
+                <div class="modal" tabindex="-1" id="TestModel">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Copy Link</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <input type="text"
+                                               id="publicLink"
+                                               class="form-control"
+                                               value="@Url.Action("PublicView", "ShareNote", new { id = note.Id }, ViewContext.HttpContext.Request.Scheme)"
+                                               readonly />
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="copyToClipboard()">Copy link</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card text-center align-items-center mt-0 w-100 flex p-3" style="width: 40rem; height: 40rem;">
+                <img src="@note.ImageUrl" class="card-img-top img-thumbnail thumbnail-box-shadow" alt="Note Image" style="width: 300px; height: 250px;">
+                <h5 class="card-title text-center text-black">@note.Title</h5>
+                <div class="card-body">
+                    <p class="card-text text-center m-2">@note.Description</p>
+                </div>
+                <div class="card-footer text-muted mt-2" style="width: 23rem; height: 5rem;">
+                    Created at @note.DateCreated
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<script>
+    function copyToClipboard() {
+        var copyText = document.getElementById('publicLink');
+        copyText.select();
+        document.execCommand('copy');
+        alert('Copied the link: ' + copyText.value);
+    }
+</script>

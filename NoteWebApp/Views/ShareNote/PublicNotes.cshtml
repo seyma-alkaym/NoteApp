@@ -1,0 +1,48 @@
+﻿@model IEnumerable<NoteWebApp.Models.Note>
+
+@{
+    ViewData["Title"] = "Public Notes";
+}
+
+<script src="https://kit.fontawesome.com/e0c6f6a835.js" crossorigin="anonymous"></script>
+
+<style>
+    .card {
+        font-size: smaller;
+    }
+
+    .card-body {
+        margin: 10px, 4px, 4px, 10px;
+        padding: 4px;
+        background-color: whitesmoke;
+        width: 23rem;
+        height: 22rem;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: justify;
+    }
+</style>
+
+
+<div class="row align-items-center justify-content-center">
+    <h2 class="text-center text-black">Notes Shared By Other Users</h2>
+
+    @foreach (var note in Model)
+        {
+            <div class="col-md-4 mb-3 text-muted mt-3">
+                <div class="card text-center align-items-center mt-0 w-100 flex p-3" style="width: 40rem; height: 40rem;">
+                    <img src="@note.ImageUrl" class="card-img-top img-thumbnail thumbnail-box-shadow" alt="Note Image" style="width: 300px; height: 250px;">
+                    <a href="@Url.Action("PublicView", "ShareNote" , new { id = note.Id }, ViewContext.HttpContext.Request.Scheme)" class="text-decoration-none float-start mt-2">
+                        <p class="card-title text-center">@note.Title</p>
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text text-center m-2">@note.Description</p>
+                    </div>
+                    <div class="card-footer text-muted mt-2" style="width: 23rem; height: 5rem;">
+                        Created at <b>@note.DateCreated</b> by <strong>@(note.AppUser != null ? note.AppUser.UserName : "Unknown User")</strong>
+                    </div>
+                </div>
+            </div>
+        }
+</div>
+
